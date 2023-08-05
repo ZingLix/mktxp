@@ -119,7 +119,8 @@ class IPConnectionRateDatasource:
             records = []
             for item in connection_records:
                 record = item
-                record["src_address"] = item["src-address"].split(":")[0]
+                record["src_ip"] = item["src-address"].split(":")[0]
+                record["src_address"] = item["src-address"]
                 record["dst_address"] = item["dst-address"]
                 record["repl-rate"] = int(item["repl-rate"])
                 record["orig-rate"] = int(item["orig-rate"])
