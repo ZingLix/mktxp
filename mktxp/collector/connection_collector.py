@@ -62,8 +62,9 @@ class IPConnectionCollector(BaseCollector):
                 router_entry
             )
             connection_rates_labels = [
-                "src-address",
-                "dst-address",
+                "src_ip",
+                "src_address",
+                "dst_address",
                 "protocol",
             ]
             connection_recv_rates_metrics_gauge = BaseCollector.gauge_collector(
