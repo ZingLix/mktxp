@@ -120,6 +120,8 @@ class IPConnectionRateDatasource:
             for item in connection_records:
                 record = item
                 item["src-address"] = item["src-address"].split(":")[0]
+                item["repl-rate"] = int(item["repl-rate"])
+                item["orig-rate"] = int(item["orig-rate"])
                 if add_router_id:
                     for router_key, router_value in router_entry.router_id.items():
                         record[router_key] = router_value

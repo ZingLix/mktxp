@@ -56,25 +56,30 @@ class IPConnectionCollector(BaseCollector):
                 "connection_count",
                 connection_stats_labels,
             )
+            yield connection_stats_metrics_gauge
+
             connection_rate_records = IPConnectionRateDatasource.metric_records(
                 router_entry
             )
-            for connection_rate in connection_rate_records:
-                BaseOutputProcessor.augment_record(
-                    router_entry, connection_rate, id_key="src_address"
-                )
             connection_rates_labels = [
-                "src_address",
-                "dst_addresses",
-                "orig_rate",
-                "reply_rate",
+                "src-address",
+                "dst-address",
+                "protocol",
             ]
-            connection_rates_metrics_gauge = BaseCollector.gauge_collector(
-                "connection_rate",
-                "Open connection rates",
-                connection_rates_metrics_gauge,
-                "connection_rate",
+            connection_recv_rates_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_recv_rate",
+                "Open connection recv rates",
+                connection_rate_records,
+                "repl-rate",
                 connection_rates_labels,
             )
-            yield connection_stats_metrics_gauge
+            yield connection_recv_rates_metrics_gauge
+            connection_send_rates_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_send_rate",
+                "Open connection sebd rates",
+                connection_rate_records,
+                "orig-rate",
+                connection_rates_labels,
+            )
+            yield connection_send_rates_metrics_gauge
 
