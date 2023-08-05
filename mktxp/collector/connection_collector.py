@@ -14,28 +14,67 @@
 
 from mktxp.collector.base_collector import BaseCollector
 from mktxp.flow.processor.output import BaseOutputProcessor
-from mktxp.datasource.connection_ds import IPConnectionDatasource, IPConnectionStatsDatasource
+from mktxp.datasource.connection_ds import (
+    IPConnectionDatasource,
+    IPConnectionStatsDatasource,
+    IPConnectionRateDatasource,
+)
 
 
 class IPConnectionCollector(BaseCollector):
-    ''' IP Connection Metrics collector
-    '''    
+    """ IP Connection Metrics collector
+    """
+
     @staticmethod
     def collect(router_entry):
-        if router_entry.config_entry.connections:       
+        if router_entry.config_entry.connections:
             connection_records = IPConnectionDatasource.metric_records(router_entry)
             if connection_records:
-                connection_metrics = BaseCollector.gauge_collector('ip_connections_total', 'Number of IP connections', connection_records, 'count',)
+                connection_metrics = BaseCollector.gauge_collector(
+                    "ip_connections_total",
+                    "Number of IP connections",
+                    connection_records,
+                    "count",
+                )
                 yield connection_metrics
 
         if router_entry.config_entry.connection_stats:
-            connection_stats_records = IPConnectionStatsDatasource.metric_records(router_entry)            
+            connection_stats_records = IPConnectionStatsDatasource.metric_records(
+                router_entry
+            )
 
             for connection_stat_record in connection_stats_records:
-                BaseOutputProcessor.augment_record(router_entry, connection_stat_record, id_key = 'src_address')
+                BaseOutputProcessor.augment_record(
+                    router_entry, connection_stat_record, id_key="src_address"
+                )
 
-            connection_stats_labels = ['src_address', 'dst_addresses', 'dhcp_name']                
-            connection_stats_metrics_gauge = BaseCollector.gauge_collector('connection_stats', 'Open connection stats', 
-                                                                connection_stats_records, 'connection_count', connection_stats_labels)
+            connection_stats_labels = ["src_address", "dst_addresses", "dhcp_name"]
+            connection_stats_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_stats",
+                "Open connection stats",
+                connection_stats_records,
+                "connection_count",
+                connection_stats_labels,
+            )
+            connection_rate_records = IPConnectionRateDatasource.metric_records(
+                router_entry
+            )
+            for connection_rate in connection_rate_records:
+                BaseOutputProcessor.augment_record(
+                    router_entry, connection_rate, id_key="src_address"
+                )
+            connection_rates_labels = [
+                "src_address",
+                "dst_addresses",
+                "orig_rate",
+                "reply_rate",
+            ]
+            connection_rates_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_rate",
+                "Open connection rates",
+                connection_rates_metrics_gauge,
+                "connection_rate",
+                connection_rates_labels,
+            )
             yield connection_stats_metrics_gauge
 
