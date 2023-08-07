@@ -124,6 +124,8 @@ class IPConnectionRateDatasource:
                 record["dst_address"] = item["dst-address"]
                 record["repl-rate"] = int(item["repl-rate"])
                 record["orig-rate"] = int(item["orig-rate"])
+                record["orig-bytes"] = int(item["orig-bytes"])
+                record["repl-bytes"] = int(item["repl-bytes"])
                 if add_router_id:
                     for router_key, router_value in router_entry.router_id.items():
                         record[router_key] = router_value

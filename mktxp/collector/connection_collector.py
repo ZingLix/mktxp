@@ -83,4 +83,20 @@ class IPConnectionCollector(BaseCollector):
                 connection_rates_labels,
             )
             yield connection_send_rates_metrics_gauge
+            connection_recv_bytes_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_recv_bytes",
+                "Open connection recv rates",
+                connection_rate_records,
+                "repl-bytes",
+                connection_rates_labels,
+            )
+            yield connection_recv_bytes_metrics_gauge
+            connection_send_bytes_metrics_gauge = BaseCollector.gauge_collector(
+                "connection_send_bytes",
+                "Open connection sebd rates",
+                connection_rate_records,
+                "orig-bytes",
+                connection_rates_labels,
+            )
+            yield connection_send_bytes_metrics_gauge
 
